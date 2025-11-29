@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "../globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "provaAI - Seu Assistente Inteligente",
@@ -15,6 +16,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className="antialiased newspaper-bg">
         {children}
+        <Toaster position="top-center" />
       </body>
     </html>
   );

@@ -29,9 +29,10 @@ interface ChatHistory {
 
 interface HomeClientProps {
   user: User | null;
+  chatId: string | null;
 }
 
-export default function HomeClient({ user }: HomeClientProps) {
+export default function HomeClient({ user, chatId }: HomeClientProps) {
   const [usernameOpen, setUsernameOpen] = useState(!user);
   const [messages, setMessages] = useState<Message[]>([
     {
