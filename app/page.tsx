@@ -3,6 +3,7 @@
 import { Chat } from "@/components/chats/chat";
 import SidebarChats from "@/components/sidebar/sidebar-chats";
 import SidebarSources from "@/components/sidebar/sidebar-sources";
+import Username from "@/components/username/username";
 import { useState } from "react";
 
 interface Message {
@@ -26,6 +27,7 @@ interface ChatHistory {
 }
 
 export default function Home() {
+  const [usernameOpen, setUsernameOpen] = useState(true);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -61,7 +63,10 @@ export default function Home() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-[#f5f5f0]">
-      {/* Header */}
+      <Username
+        open={usernameOpen}
+        openChange={() => setUsernameOpen(false)}
+      />
       <header className="z-10 border-b-4 border-black bg-white px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
