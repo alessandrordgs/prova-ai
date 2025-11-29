@@ -1,4 +1,6 @@
 import { Source } from "@/components/home/home";
+import Upload from "../uploads/upload";
+import { useState } from "react";
 
 interface sidebarSoucesProps  {
   sources: Array<Source>;
@@ -8,6 +10,8 @@ export default function SidebarSources( {
   sources,
   handleRemoveSource,
 }: sidebarSoucesProps) {
+
+  const [uploadOpen, setUploadOpen] = useState(false);
   return (
      <aside className="hidden w-72 shrink-0 border-l-4 border-black bg-white lg:block">
           <div className="flex h-full flex-col">
@@ -21,10 +25,14 @@ export default function SidebarSources( {
             </div>
 
             <div className="border-b-3 border-dashed border-black p-3" style={{ borderBottomWidth: "3px" }}>
-              <button className="flex w-full items-center justify-center gap-2 border-3 border-black bg-black py-3 font-['Space_Mono'] text-sm font-bold uppercase text-white transition-all hover:bg-white hover:text-black"
+              <button onClick={() => setUploadOpen(!uploadOpen)} className="flex w-full items-center justify-center gap-2 border-3 border-black bg-black py-3 font-['Space_Mono'] text-sm font-bold uppercase text-white transition-all hover:bg-white hover:text-black"
                 style={{ borderWidth: "3px" }}>
                 <span className="text-lg">+</span> Adicionar
               </button>
+              <Upload
+                open={uploadOpen}
+                openChange={() => setUploadOpen(!uploadOpen)}
+              />
             </div>
             
             <div className="flex-1 overflow-y-auto p-3">
