@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: provaai-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: provaai
+      POSTGRES_PASSWORD: provaai123
+      POSTGRES_DB: provaai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U provaai -d provaai"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: provaai-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./entrypoint.sh:/entrypoint.sh
+    restart: unless-stopped
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list | grep -q 'llama3.1:8b' && ollama list | grep -q 'nomic-embed-text'"]
+      interval: 10s
+      timeout: 10s
+      retries: 60
+      start_period: 60s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: provaai-app
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://provaai:provaai123@postgres:5432/provaai
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_CHAT_MODEL=llama3.1:8b
+      - OLLAMA_EMBEDDING_MODEL=nomic-embed-text
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  ollama_data:

@@ -1,4 +1,3 @@
-import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useState } from "react";
 import { createGuestUser, createUser } from "@/lib/actions/user";
