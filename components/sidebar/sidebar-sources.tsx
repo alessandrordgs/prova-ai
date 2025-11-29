@@ -1,4 +1,4 @@
-import { Source } from "@/app/page";
+import { Source } from "@/components/home/home";
 
 interface sidebarSoucesProps  {
   sources: Array<Source>;
