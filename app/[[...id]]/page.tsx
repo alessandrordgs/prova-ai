@@ -15,10 +15,10 @@ export default async function Home( { params }: PageProps) {
   const user = await getCurrentUser();
   
   let chatId: string | null = null;
-  if (id && id.length > 0) {
-    if (id[0] === "chats" && id.length > 1) {
-      chatId = id[1];
-    } else if (id[0] !== "chats") {
+  if (Array.isArray(id) && id.length > 0) {
+    if (id[0] === "chats") {
+      chatId = id[1] ?? null;
+    } else {
       chatId = id[0];
     }
   }
