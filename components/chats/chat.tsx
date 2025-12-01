@@ -19,10 +19,10 @@ export function Chat({ chatId, initialMessages = [] }: ChatProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const suggestedActions = [
-    { icon: "📝", label: "Simulado da banca", action: "Gerar 10 questões no estilo da banca selecionada" },
-    { icon: "📋", label: "Resumo por edital", action: "Resumir cada tópico do conteúdo programático" },
-    { icon: "📅", label: "Plano de estudo", action: "Montar plano semanal até a prova com metas" },
-    { icon: "🔍", label: "Perfil da banca", action: "Analisar temas mais cobrados e pegadinhas recorrentes" },
+    { label: "Simulado da banca", action: "Gerar 10 questões no estilo da banca selecionada" },
+    { label: "Resumo por edital", action: "Resumir cada tópico do conteúdo programático" },
+    { label: "Plano de estudo", action: "Montar plano semanal até a prova com metas" },
+    { label: "Perfil da banca", action: "Analisar temas mais cobrados e pegadinhas recorrentes" },
   ];
 
   useEffect(() => {
@@ -66,7 +66,6 @@ export function Chat({ chatId, initialMessages = [] }: ChatProps) {
     setInputValue("");
     setIsLoading(true);
 
-    // Mensagem do assistente "em construção"
     const assistantId = `assistant-${Date.now()}`;
     setMessages((prev) => [
       ...prev,
@@ -234,7 +233,6 @@ export function Chat({ chatId, initialMessages = [] }: ChatProps) {
                     className="flex flex-col items-center gap-2 border-3 border-black bg-white p-4 font-['Space_Mono'] transition-all hover:bg-black hover:text-white hover:shadow-[3px_3px_0px_#666]"
                     style={{ borderWidth: "3px" }}
                   >
-                    <span className="text-2xl">{action.icon}</span>
                     <span className="text-xs uppercase">{action.label}</span>
                   </button>
                 ))}

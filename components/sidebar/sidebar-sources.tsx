@@ -49,7 +49,6 @@ export default function SidebarSources({ chatId }: SidebarSourcesProps) {
     fetchSources();
   }, [fetchSources]);
 
-  // Poll for progress updates when files are processing
   useEffect(() => {
     if (!chatId) return;
 
@@ -58,7 +57,7 @@ export default function SidebarSources({ chatId }: SidebarSourcesProps) {
 
     const interval = setInterval(() => {
       fetchSources();
-    }, 1000); // Poll every 1 second
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [chatId, sources, fetchSources]);
