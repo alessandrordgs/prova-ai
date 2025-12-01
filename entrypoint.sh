@@ -12,8 +12,9 @@ done
 
 echo "Baixando modelos..."
 
-ollama pull llama3.1:8b
+# ollama pull llama3.1:8b
 ollama pull nomic-embed-text
+ollama pull qwen2.5:1.5b
 
 echo "Modelos prontos! Ollama rodando..."
 

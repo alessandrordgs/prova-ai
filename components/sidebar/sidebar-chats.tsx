@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import NewChat from "../chats/new-chat";
 
 interface sideBarProps{
   sidebarOpen: boolean;
   chatHistory: Array<{
-    id: number;
+    id: string;
     title: string;
     lastMessage: string;
     date: Date;
@@ -12,6 +13,7 @@ interface sideBarProps{
 }
 export default function SidebarChats({ sidebarOpen, chatHistory }: sideBarProps) {
   const [newChatOpen, setNewChatOpen] = useState(false);
+  const router = useRouter();
   return (
     <aside
       className={`${sidebarOpen ? "w-72" : "w-0"
@@ -42,6 +44,7 @@ export default function SidebarChats({ sidebarOpen, chatHistory }: sideBarProps)
                 key={chat.id}
                 className="group flex cursor-pointer items-start gap-2 border-3 border-black bg-[#f5f5f0] p-3 transition-all hover:bg-black hover:text-white"
                 style={{ borderWidth: "3px" }}
+                onClick={() => router.push(`/chats/${chat.id}`)}
               >
                 <span className="text-lg">💬</span>
                 <div className="flex-1 overflow-hidden">

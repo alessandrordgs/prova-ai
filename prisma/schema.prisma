@@ -58,6 +58,7 @@ model SourceChunks {
   content   String
   metadata  Json?
   embedding Unsupported("vector")?
+  textSearch Unsupported("tsvector")?
   createdAt DateTime               @default(now())
   updatedAt DateTime @updatedAt 
   Source    Source                 @relation(fields: [sourceId], references: [id], onDelete: Cascade)

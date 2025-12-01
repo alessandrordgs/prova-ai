@@ -25,10 +25,13 @@ services:
     volumes:
       - ollama_data:/root/.ollama
       - ./entrypoint.sh:/entrypoint.sh
+    environment:
+      - OLLAMA_KEEP_ALIVE=60m
+      - OLLAMA_NUM_PARALLEL=2
     restart: unless-stopped
     entrypoint: ["/bin/bash", "/entrypoint.sh"]
     healthcheck:
-      test: ["CMD-SHELL", "ollama list | grep -q 'llama3.1:8b' && ollama list | grep -q 'nomic-embed-text'"]
+      test: ["CMD-SHELL", "ollama list | grep -q 'nomic-embed-text' && ollama list | grep -q 'qwen2.5:1.5b'"]
       interval: 10s
       timeout: 10s
       retries: 60
@@ -44,8 +47,11 @@ services:
     environment:
       - DATABASE_URL=postgresql://provaai:provaai123@postgres:5432/provaai
       - OLLAMA_HOST=http://ollama:11434
-      - OLLAMA_CHAT_MODEL=llama3.1:8b
+      - OLLAMA_CHAT_MODEL=qwen2.5:1.5b
       - OLLAMA_EMBEDDING_MODEL=nomic-embed-text
+      - CHUNK_LIMIT=5
+      - HISTORY_LIMIT=2
+      - MAX_CONTEXT_CHARS=4000
     depends_on:
       postgres:
         condition: service_healthy

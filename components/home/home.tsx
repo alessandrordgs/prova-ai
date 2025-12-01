@@ -4,24 +4,12 @@ import { Chat } from "@/components/chats/chat";
 import SidebarChats from "@/components/sidebar/sidebar-chats";
 import SidebarSources from "@/components/sidebar/sidebar-sources";
 import Username from "@/components/username/username";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "@/generated/prisma/client";
-
-interface Message {
-  id: number;
-  text: string;
-  sender: "user" | "bot";
-  timestamp: Date;
-}
-
-export interface Source {
-  id: number;
-  name: string;
-  addedAt: Date;
-}
+import { toast } from "sonner";
 
 interface ChatHistory {
-  id: number;
+  id: string;
   title: string;
   lastMessage: string;
   date: Date;
@@ -34,36 +22,44 @@ interface HomeClientProps {
 
 export default function HomeClient({ user, chatId }: HomeClientProps) {
   const [usernameOpen, setUsernameOpen] = useState(!user);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: "Olá! Eu sou o provaAI. Adicione fontes na barra lateral e faça perguntas sobre elas. Posso ajudá-lo a estudar, resumir conteúdos e criar questões de prova!",
-      sender: "bot",
-      timestamp: new Date(),
-    },
-  ]);
-  const [inputValue, setInputValue] = useState("");
-  const [sources, setSources] = useState<Source[]>([
-    { id: 1, name: "Apostila de Matemática.pdf", addedAt: new Date() },
-    { id: 2, name: "Notas de Aula - História", addedAt: new Date() },
-  ]);
-  const [chatHistory] = useState<ChatHistory[]>([
-    { id: 1, title: "Questões de Matemática", lastMessage: "Gere 5 questões sobre...", date: new Date("2025-11-28") },
-    { id: 2, title: "Resumo de História", lastMessage: "Faça um resumo do...", date: new Date("2025-11-27") },
-    { id: 3, title: "Conceitos de Física", lastMessage: "Explique a lei de...", date: new Date("2025-11-26") },
-  ]);
+  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sourcesCount, setSourcesCount] = useState(0);
 
-  const handleRemoveSource = (id: number) => {
-    setSources(sources.filter((s) => s.id !== id));
-  };
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/chats", { method: "GET", cache: "no-store" });
+        if (!res.ok) return;
+        const chats: Array<{ id: string; name: string; banca: string | null; createdAt: string }> = await res.json();
+        const mapped: ChatHistory[] = chats.map((chat) => ({
+          id: chat.id,
+          title: chat.name,
+          lastMessage: `Banca: ${chat.banca ?? "N/A"}`,
+          date: new Date(chat.createdAt),
+        }));
+        setChatHistory(mapped);
+      } catch {
+        toast.error("Erro ao carregar histórico de chats.");
+      }
+    })();
+  }, []);
 
-  const suggestedActions = [
-    { icon: "", label: "Criar resumo", action: "Crie um resumo das fontes" },
-    { icon: "", label: "Gerar questões", action: "Gere questões de prova" },
-    { icon: "", label: "Explicar conceito", action: "Explique os principais conceitos" },
-    { icon: "", label: "Tópicos-chave", action: "Liste os tópicos-chave" },
-  ];
+  useEffect(() => {
+    if (!chatId) return;
+
+    (async () => {
+      try {
+        const res = await fetch(`/api/pdf?chatId=${chatId}`);
+        if (res.ok) {
+          const sources = await res.json();
+          setSourcesCount(sources.length);
+        }
+      } catch {
+        console.error("Erro ao carregar count de sources");
+      }
+    })();
+  }, [chatId]);
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-[#f5f5f0]">
@@ -98,7 +94,7 @@ export default function HomeClient({ user, chatId }: HomeClientProps) {
             </span>
             <span className="hidden border-3 border-black px-3 py-1 font-['Space_Mono'] text-xs uppercase md:block"
               style={{ borderWidth: "3px" }}>
-              {sources.length} fontes
+              {sourcesCount} fonte{sourcesCount !== 1 ? "s" : ""}
             </span>
             <div className="h-3 w-3 rounded-full border-2 border-black bg-green-500"></div>
           </div>
@@ -111,17 +107,9 @@ export default function HomeClient({ user, chatId }: HomeClientProps) {
           chatHistory={chatHistory}
         />
 
-        <Chat
-          messages={messages}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          suggestedActions={suggestedActions}
-        />
+        <Chat chatId={chatId} />
 
-        <SidebarSources
-          sources={sources}
-          handleRemoveSource={handleRemoveSource}
-        />
+        <SidebarSources chatId={chatId} />
       </div>
     </div>
   );
