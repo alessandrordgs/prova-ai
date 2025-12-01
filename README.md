@@ -24,7 +24,7 @@ Aplicação de chat com documentos PDF para estudos de concursos públicos, util
 
 ```bash
 # Clone o repositório
-git clone <repo-url>
+git clone https://github.com/alessandrordgs/prova-ai.git
 cd prova-ai
 
 # Suba todos os serviços
